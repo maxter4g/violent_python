@@ -7,9 +7,10 @@ funzione in python 2 .7(non tollera le lettere spagnole) e 3.2(piu veloce)
 to do list
 
 1 capire se il path puo' essere relativo
+1bis inserire input
 2 come bloccare quando trova la password (ok)
-3 contatore (inserita progressbar ma funziona solo in 2.6 e non in thread )
-4 eliminare la b nel print out
+3 contatore (inserita progressbar ma funziona solo in 2.6 e non in thread )(ok)
+4 eliminare la b nel print out (ok)
 
 @author: NNRooth
 '''
@@ -65,7 +66,7 @@ def decryptZip(zipfilename, dicfilename):
  #       stdout.flush()
         i = i+1
  #       stdout.write(":".join("{0:x}".format(ord(c)) for c in s))
-        stdout.write('\t%s\n' % password)
+        stdout.write('\t%s\n' % s)
         t = Thread(target=extractZip, args=(zFile, password))
         
  #       pbar = ProgressBar(10)
@@ -83,10 +84,14 @@ def decryptZip(zipfilename, dicfilename):
 
 def main():
 ##    stdout.write('[+] Zip Nasty!!!\n')
-    
-##    zipfilename = input('[.] Zip File Path: ')
-##    dicfilename = input('[.] Dic File Path: ')
     zipfilename = '/root/Desktop/ViolentPython/CH1/zipTest/secrets.zip'
+    zipfilename2 = input('[.] Zip File Path: ')
+    if zipfilename2 == "":
+        zipfilename = '/root/Desktop/ViolentPython/CH1/zipTest/secrets.zip'
+    else:
+        zipfilename= zipfilename2
+    dicfilename = input('[.] Dic File Path: ')
+#    zipfilename = '/root/Desktop/ViolentPython/CH1/zipTest/secrets.zip'
 #  dicfilename = '../dictionary.txt'   
     dicfilename = '/root/Desktop/ViolentPython/CH1/zipTest/dictionaryBig2.txt'   
     if not (zipfile.is_zipfile(zipfilename)):
