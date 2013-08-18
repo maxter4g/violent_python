@@ -1,6 +1,6 @@
 '''
 Created on Mar 20, 2013
-modified by maxter 
+modified by maxter Rev 3
 funzione in python 2 .7(non tollera le lettere spagnole) e 3.2(piu veloce) 
 
 
@@ -16,12 +16,13 @@ to do list
 '''
 # from progressbar import ProgressBar
 import zipfile
+import sys
+import os
 from sys import stdout
 from threading import Thread
 from threading import Semaphore
 
 threadLock = Semaphore(value=1)
-
 
 def extractZip(zipFile, password):
     flg = 0
@@ -30,16 +31,10 @@ def extractZip(zipFile, password):
         stdout.write('\n')
         stdout.write('[+] Password Found: %s' % password.decode() + '\n')
         stdout.write('\n')
+        stdout.write('[!] Successfully Done\n')
         exit.__init__(main)
         flg = 1
-        exit()
-#        if Thread.is_alive():
-#            try:
-#                 Thread._Thread__stop()
-#                 Thread.quit
-#            except:
-#                 print(str(Thread.getName()) + ' could not be terminated')        
-                
+        exit()         
         Thread._stop()
     except:
         if flg == 1:
@@ -58,7 +53,6 @@ def decryptZip(zipfilename, dicfilename):
     i = 0
     for line in pFile.readlines():
         password = line.strip().encode('utf-8', 'strict')
-     #   i = 0
 
         s = line.strip()
  #       stdout.write('\t%s\r' % s)
@@ -83,26 +77,43 @@ def decryptZip(zipfilename, dicfilename):
     return None
 
 def main():
-##    stdout.write('[+] Zip Nasty!!!\n')
+    ver = sys.version.split(' ')[0]
+
     zipfilename = '/root/Desktop/ViolentPython/CH1/zipTest/secrets.zip'
-    zipfilename2 = input('[.] Zip File Path: ')
-    if zipfilename2 == "":
+    
+    if ver[0] == "3":
+        ans = input('[.] Zip File Path: ')
+    else:	
+        ans = raw_input('[.] Zip File Path: ')
+    
+    if ans == "":
         zipfilename = '/root/Desktop/ViolentPython/CH1/zipTest/secrets.zip'
     else:
-        zipfilename= zipfilename2
-    dicfilename = input('[.] Dic File Path: ')
-#    zipfilename = '/root/Desktop/ViolentPython/CH1/zipTest/secrets.zip'
-#  dicfilename = '../dictionary.txt'   
-    dicfilename = '/root/Desktop/ViolentPython/CH1/zipTest/dictionaryBig2.txt'   
+        zipfilename= ans
+        
+    if ver[0] == "3":
+    	ans = input('[.] Dic File Path: ')
+    else:
+        ans = raw_input('[.] Dic File Path: ')
+    if ans == "":
+        dicfilename = '/root/Desktop/ViolentPython/CH1/zipTest/dictionaryBig2.txt' 
+    else:
+        dicfilename= ans
+        
+        if os.path.exists(dicfilename):
+            pass
+        else:
+            stdout.write('\n')
+            stdout.write('[-] %s not found...\n' % dicfilename)   
+            exit(0) 
     if not (zipfile.is_zipfile(zipfilename)):
-        stdout.write('[-] %s is not a zip file...\n' % zipfilename)
+        stdout.write('[-] %s not found...\n' % zipfilename)
         exit(0)
     else:
         stdout.write('[*] Decrypting %s  .. please wait....\n' % zipfilename)
- #       stdout.write('[*] Please wait...')
     
     decryptZip(zipfilename, dicfilename)
-##    stdout.write('[!] Done\n')
+    stdout.write('[!] Unsuccessfully Done\n')
 
 if __name__ == '__main__':
     main()
