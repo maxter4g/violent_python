@@ -1,18 +1,18 @@
 '''
-Created on Mar 20, 2013
-modified by maxter Rev 3
-funzione in python 2 .7(non tollera le lettere spagnole) e 3.2(piu veloce) 
+Created on Mar 20, 2013 by NNRooth
+Thanks to  NNRooth at https://github.com/nnrooth/Violent-Python-33/tree/master/Violent Python 33
 
+modified by maxter4g
+
+Rev 1
+
+works in python 2 .7 e 3.2(faster) 
 
 to do list
+1-progessbar do not work inside thread
 
-1 capire se il path puo' essere relativo
-1bis inserire input
-2 come bloccare quando trova la password (ok)
-3 contatore (inserita progressbar ma funziona solo in 2.6 e non in thread )(ok)
-4 eliminare la b nel print out (ok)
 
-@author: NNRooth
+
 '''
 # from progressbar import ProgressBar
 import zipfile
