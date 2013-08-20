@@ -1,4 +1,5 @@
 '''
+first idea O'Connor in his book Violent Python
 Created on Mar 20, 2013 by NNRooth
 Thanks to  NNRooth at https://github.com/nnrooth/Violent-Python-33/tree/master/Violent Python 33
 
