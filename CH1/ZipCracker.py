@@ -97,7 +97,7 @@ def main():
     else:
         ans = raw_input('[.] Dic File Path: ')
     if ans == "":
-        dicfilename = '/root/Desktop/ViolentPython/CH1/zipTest/dictionaryBig2.txt' 
+        dicfilename = '/root/Desktop/ViolentPython/CH1/zipTest/dictionary.dic' 
     else:
         dicfilename= ans
         
