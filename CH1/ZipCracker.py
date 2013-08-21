@@ -10,6 +10,7 @@ Rev 1
 works in python 2 .7 e 3.2(faster) 
 
 to do list
+run from eclipse
 1-progessbar do not work inside thread
 
 
