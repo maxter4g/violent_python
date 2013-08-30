@@ -81,7 +81,9 @@ def decryptZip(zipfilename, dicfilename):
 def main():
     ver = sys.version.split(' ')[0]
 
-    zipfilename = '/root/Desktop/ViolentPython/CH1/zipTest/secrets.zip'
+    __dir__ = os.path.dirname(os.path.abspath(__file__))
+    zippath = os.path.join(__dir__, 'zipTest/secrets.zip')
+    dicpath = os.path.join(__dir__, 'zipTest/dictionary.dic')
     
     if ver[0] == "3":
         ans = input('[.] Zip File Path: ')
@@ -89,7 +91,7 @@ def main():
         ans = raw_input('[.] Zip File Path: ')
     
     if ans == "":
-        zipfilename = '/root/Desktop/ViolentPython/CH1/zipTest/secrets.zip'
+        zipfilename = zippath
     else:
         zipfilename= ans
         
@@ -98,7 +100,7 @@ def main():
     else:
         ans = raw_input('[.] Dic File Path: ')
     if ans == "":
-        dicfilename = '/root/Desktop/ViolentPython/CH1/zipTest/dictionary.dic' 
+        dicfilename = dicpath 
     else:
         dicfilename= ans
         
@@ -112,7 +114,7 @@ def main():
         stdout.write('[-] %s not found...\n' % zipfilename)
         exit(0)
     else:
-        stdout.write('[*] Decrypting %s  .. please wait....\n' % zipfilename)
+        stdout.write('[*] Decrypting %s  .. please wait....til Done!\n' % zipfilename)
     
     decryptZip(zipfilename, dicfilename)
     stdout.write('[!] Unsuccessfully Done\n')
