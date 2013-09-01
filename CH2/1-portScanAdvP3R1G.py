@@ -35,15 +35,13 @@ finally:
 screenLock = Semaphore(value=1)
 scan_list = []
 
+
 ##thread_lock = Semaphore(value=1)
 ##
 def getGeoLoc(host):
 
     __dir__ = os.path.dirname(os.path.abspath(__file__))
     filepath = os.path.join(__dir__, 'GeoDat/Geo.dat')
-#    f = open(filepath, 'w')   
-    
-#    if geo_Flg != "N": gi = pygeoip.GeoIP('/root/Desktop/ViolentPython/CH2/GeoDat/Geo.dat')
     if geo_Flg != "N": gi = pygeoip.GeoIP(filepath)
 
     try:
@@ -53,7 +51,6 @@ def getGeoLoc(host):
         country = rec['country_name']
         longitude = rec['longitude']
         latitude = rec['latitude']
-
         if city != '' and state != '':
             geoLoc = '%s,%s,%s : %6f,%6f' % (city, state, country, longitude, latitude)
         elif city != '':
@@ -67,13 +64,14 @@ def getGeoLoc(host):
 
 
 def nmapScan(tgtHost,tgtPort):
-
+    global end_Flg
     try:
         tgtHost = gethostbyname(tgtHost)
         nmScan = nmap.PortScanner()
         nmScan.scan(tgtHost, tgtPort)
         state=nmScan[tgtHost]['tcp'][int(tgtPort)]['state']
         if state == 'closed':
+            end_Flg += 1
             pass
         else:
             pass
@@ -85,6 +83,7 @@ def nmapScan(tgtHost,tgtPort):
  #       thread_lock.release()
     scan_list.append('\n%s : %s : %s : %s' % (tgtHost, tgtPort, state, ""))
     stdout.write('[+] tcp %s %s' % (state, tgtPort) + '\n')
+    end_Flg += 1
 
 
 def saveList2Log():
@@ -99,7 +98,6 @@ def saveList2Log():
         __dir__ = os.path.dirname(os.path.abspath(__file__))
         filepath = os.path.join(__dir__, 'file.log')
         f = open(filepath, 'w')                
-#        f = open("file.log", "w")
         try:
             f.writelines(logDoc) # Write a sequence of strings to a file
         finally:
@@ -107,6 +105,7 @@ def saveList2Log():
     except Exception as e:
         stdout.write('\n[-] Err: %s' % e)
         pass
+
 
 def parsePort(ans):
     try:
@@ -128,11 +127,9 @@ def parsePort(ans):
                 __dir__ = os.path.dirname(os.path.abspath(__file__))
                 filepath = os.path.join(__dir__, 'ports.txt')
                 dictFile = open(filepath, 'r')                
-#                dictFile = open('/root/workspace/ports.txt', 'r')
             except Exception as e:
                  stdout.write('\n[-] Err: %s' % e)
                  exit(__main__)
-            
             ports = []
             for line in dictFile.readlines():
                  ports.append(int(line.strip()))
@@ -143,9 +140,9 @@ def parsePort(ans):
             tgtPort = ans
         return tgtPort
     except Exception as e:
-#        pass
         if verbose_Flg == "Y":
-            print(e)
+            stdout.write('\n[-] Err: %s' % e)
+
 
 def parseTime(time):
     hours = time / 60 / 24
@@ -155,6 +152,7 @@ def parseTime(time):
 
 
 def connScan(tgtHost, tgtPort):
+    global end_Flg
     try:
         connSkt = socket(AF_INET, SOCK_STREAM)
         connSkt.connect((tgtHost, tgtPort))
@@ -165,6 +163,7 @@ def connScan(tgtHost, tgtPort):
         scan_list.append('\n%s : %s : %s : %s' % (tgtHost, tgtPort, banner, results))
         stdout.write('\n')
         stdout.write('[+] tcp open %s' % tgtPort + '\n')
+        end_Flg += 1
         if verbose_Flg == "Y":
             stdout.write('[+] '+ str(results)+ '\n')
             stdout.write('\n')
@@ -173,6 +172,7 @@ def connScan(tgtHost, tgtPort):
             print(e)
 #        screenLock.acquire()
         stdout.write('[-] tcp closed %s' % tgtPort + '\n')
+        end_Flg += 1
     finally:
  #   	screenLock.release()
            connSkt.close()
@@ -197,7 +197,7 @@ def portScan(tgtHost, tgtPorts):
 #        stdout.write('[+] please wait...' + '\n')
     except Exception as e:
         if verbose_Flg == "Y":
-##            print(e)
+             stdout.write('\n[-] Warning: %s\n' % e)
              pass
   #  socket.setdefaulttimeout(1)
     for tgtPort in tgtPorts:
@@ -206,16 +206,14 @@ def portScan(tgtHost, tgtPorts):
                     connScan(tgtHost,int(tgtPort))
                 else:
                     nmapScan(tgtHost, tgtPort)
-            else:
-                
+            else:               
                 if nmap_Flg == "N":
                     t = Thread(target=connScan,args=(tgtHost,int(tgtPort)))
                     t.start()
                 else:
                     t = Thread(target=nmapScan,args=(tgtHost,tgtPort))
                     t.start()
-                    
-                   # nmapScan(tgtHost, tgtPort)
+
 
 def main():
 
@@ -224,20 +222,19 @@ def main():
     global log_Flg
     global nmap_Flg
     global geo_Flg
+    global end_Flg
         
     ver = sys.version.split(' ')[0]
-
     if ver[0] == "3":
         ans = input('[.] Host? (IP or domain): ').upper()
     else:
         ans = raw_input('[.] Host? (IP or domain): ').upper()
     if ans == "":
-        tgtHost = '192.168.1.169'
+        tgtHost = '192.168.1.120'
     elif ans == "D":
         tgtHost = 'www.tiscali.it'
     else:
         tgtHost = ans
-
     ans = ""
     if ver[0] == "3":
         ans = input('Ports: [s]tandard, [ ]or[d]efault,[p1-p2]range, [f]ile : ').upper()
@@ -246,22 +243,21 @@ def main():
     tgtPort = parsePort(ans)
 
     if ver[0] == "3":
-    	ans = input('[.] Verbose - default Yes: ').upper()
+    	ans = input('[.] Verbose - default No: ').upper()
     else:
-        ans = raw_input('[.] Verbose - default Yes: ').upper()
-    if (ans == "" or ans == "Y"):
-        verbose_Flg = 'Y'
-    else:
-        verbose_Flg = "N"
-    if ver[0] == "3":
-    	ans = input('[.] Thread - default No: ').upper()
-    else:
-        ans = raw_input('[.] Thread - default No: ').upper()
+        ans = raw_input('[.] Verbose - default No: ').upper()
     if (ans == "" or ans == "N"):
-        Thread_Flg = 'N'
+        verbose_Flg = 'N'
     else:
-        Thread_Flg = "Y"
-
+        verbose_Flg = "Y"
+#    if ver[0] == "3":
+#    	ans = input('[.] Thread - default No: ').upper()
+#    else:
+#        ans = raw_input('[.] Thread - default No: ').upper()
+#    if (ans == "" or ans == "N"):
+#        Thread_Flg = 'N'
+#    else:
+    Thread_Flg = "Y"
     if ver[0] == "3":
     	ans = input('[.] Save log - default Yes: ').upper()
     else:
@@ -270,7 +266,6 @@ def main():
         log_Flg = 'Y'
     else:
         log_Flg = "N"
-
     if nmap_Flg != "N":
         if ver[0] == "3":
             ans = input('[.] Use Nmap - default No: ').upper()
@@ -298,15 +293,16 @@ def main():
     tgtPorts = str(tgtPort).split(',')
     start_time2 = time.time()
     start_time = time.clock()
+    end_Flg = 0
     portScan(tgtHost, tgtPorts)
-    
+    while end_Flg <= len(tgtPorts)-1:
+        pass
     stop_time2 = time.time()
     stop_time = time.clock()
     elapsed_time = stop_time - start_time
     elapsed_time_unix = stop_time2 - start_time2
     formated_time = parseTime(elapsed_time)
     formated_time_unix = parseTime(elapsed_time_unix)
- #   if Thread_Flg == "N":
     if _platform == "linux" or _platform == "linux2":
         stdout.write('\n[+] Run Time Unix: %s' % formated_time_unix)    # linux
     elif _platform == "darwin":
