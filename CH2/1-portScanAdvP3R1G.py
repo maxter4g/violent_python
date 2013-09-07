@@ -5,15 +5,10 @@ import sys
 import os
 from sys import stdout
 from socket import *
-#from socket import socket
-#import socket
 from threading import *
 from threading import Semaphore
-##from socket import setdefaulttimeout
-##from threading import Thread
 from sys import platform as _platform
 import time
-
 ## No Standard Imports
 try:
     import pygeoip
@@ -34,16 +29,12 @@ finally:
 
 screenLock = Semaphore(value=1)
 scan_list = []
-
-
 ##thread_lock = Semaphore(value=1)
-##
-def getGeoLoc(host):
 
+def getGeoLoc(host):
     __dir__ = os.path.dirname(os.path.abspath(__file__))
     filepath = os.path.join(__dir__, 'GeoDat/Geo.dat')
     if geo_Flg != "N": gi = pygeoip.GeoIP(filepath)
-
     try:
         rec = gi.record_by_name(host)
         city = rec['city']
@@ -232,7 +223,7 @@ def main():
     if ans == "":
         tgtHost = '192.168.1.120'
     elif ans == "D":
-        tgtHost = 'www.tiscali.it'
+        tgtHost = 'www.google.com'
     else:
         tgtHost = ans
     ans = ""
@@ -250,13 +241,6 @@ def main():
         verbose_Flg = 'N'
     else:
         verbose_Flg = "Y"
-#    if ver[0] == "3":
-#    	ans = input('[.] Thread - default No: ').upper()
-#    else:
-#        ans = raw_input('[.] Thread - default No: ').upper()
-#    if (ans == "" or ans == "N"):
-#        Thread_Flg = 'N'
-#    else:
     Thread_Flg = "Y"
     if ver[0] == "3":
     	ans = input('[.] Save log - default Yes: ').upper()
