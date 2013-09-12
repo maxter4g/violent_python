@@ -221,7 +221,7 @@ def main():
     else:
         ans = raw_input('[.] Host? (IP or domain): ').upper()
     if ans == "":
-        tgtHost = '192.168.1.120'
+        tgtHost = '192.168.1.169'
     elif ans == "D":
         tgtHost = 'www.google.com'
     else:
